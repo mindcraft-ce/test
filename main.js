@@ -12,18 +12,19 @@ function fetchJoke() {
           const joke = JSON.parse(data);
           resolve(`${joke.setup}\n${joke.punchline}`);
         } catch (err) {
-          reject("Failed to parse joke.");
+          reject("Unable to parse the joke.");
         }
       });
-    }).on("error", (err) => reject("Request failed."));
+    }).on("error", () => reject("Could not retrieve a joke."));
   });
 }
 
-function typeOut(text, speed = 50) {
+function typeOut(text, speed = 40) {
   let i = 0;
   const interval = setInterval(() => {
     if (i >= text.length) {
       clearInterval(interval);
+      process.stdout.write("\n"); // new line after joke
     } else {
       process.stdout.write(text[i]);
       i++;
@@ -32,11 +33,11 @@ function typeOut(text, speed = 50) {
 }
 
 (async () => {
-  console.log("Fetching a joke for you...\n");
+  console.log("Getting a random joke...\n");
   try {
     const joke = await fetchJoke();
     typeOut(joke);
   } catch (err) {
-    console.error("Error:", err);
+    console.error("Oops! " + err);
   }
 })();
